@@ -4,7 +4,6 @@ namespace CasbinAdapter\Redis;
 
 use Casbin\Exceptions\CasbinException;
 use Casbin\Exceptions\NotImplementedException;
-use Casbin\Model\Assertion;
 use Casbin\Model\Model;
 
 /**
@@ -14,7 +13,7 @@ class Adapter implements \Casbin\Persist\Adapter
 {
 
     /**
-     * @var \Redis
+     * @var object
      */
     protected $redis_handle;
 
@@ -29,6 +28,7 @@ class Adapter implements \Casbin\Persist\Adapter
      * @param object
      * @param string
      * @return void
+     * @throws CasbinException
      */
     public function __construct(object $redis_handle, $key_name = 'casbin_policy:')
     {
@@ -51,11 +51,14 @@ class Adapter implements \Casbin\Persist\Adapter
      */
     public function loadPolicy($model): void
     {
-        $data = $this->redis_handle->get($this->key_name);
-        if ($data) {
-            $data = unserialize($data);
-            $model->model = $data;
+        $data = $this->redis_handle->hMGet($this->key_name, ['p', 'g']);
+        if (isset($data['p']) && $data['p']) {
+            $model->model['p'] = unserialize($data['p']);
         }
+        if (isset($data['g']) && $data['g']) {
+            $model->model['g'] = unserialize($data['g']);
+        }
+
     }
 
 
@@ -66,8 +69,15 @@ class Adapter implements \Casbin\Persist\Adapter
      */
     public function savePolicy($model)
     {
-        $data = serialize($model->model);
-        return $this->redis_handle->set($this->key_name, $data);
+        $data = [];
+        if (isset($model->model['p'])) {
+            $data['p'] = serialize($model->model['p']);
+        }
+
+        if (isset($model->model['g'])) {
+            $data['g'] = serialize($model->model['g']);
+        }
+        return $this->redis_handle->hMSet($this->key_name, $data);
     }
 
     /**
@@ -117,5 +127,14 @@ class Adapter implements \Casbin\Persist\Adapter
     public function removeFilteredPolicy($sec, $ptype, $fieldIndex, ...$fieldValues)
     {
         throw new NotImplementedException('not implemented');
+    }
+
+    /**
+     * 清除所有的数据规则
+     * @return int
+     */
+    public function flush()
+    {
+        return $this->redis_handle->del($this->key_name);
     }
 }
