@@ -2,6 +2,12 @@
 
 Redis adapter for Casbin
 
+#composer
+
+```
+composer require nsnake/casbin-adapter-redis-adapter
+```
+
 # How to use:
 
 ```php
@@ -30,6 +36,12 @@ CasbinAdapter-Redis-Adapter only support savePolicy and loadPolicy function。
 ##############################################################################
 
 基于redis的Casbin快速存取
+
+#composer安装
+
+```
+composer require nsnake/casbin-adapter-redis-adapter
+```
 
 # 使用方法:
 
