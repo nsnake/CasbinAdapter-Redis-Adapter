@@ -22,6 +22,7 @@ $enforcer->loadPolicy();
 
 # Notice:
 PHP redis extensions support RedisCluster and Predis
+
 CasbinAdapter-Redis-Adapter only support savePolicy and loadPolicy function。
 
 
