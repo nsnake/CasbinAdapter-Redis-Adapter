@@ -1,0 +1,21 @@
+{
+  "name": "nsnake/casbin-adapter-redis-adapter",
+  "description": "Redis adapter for Casbin",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "nsnake",
+      "email": "loveme1314@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": "^7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "CasbinAdapter\\": "src/CasbinAdapter"
+    }
+  }
+}
